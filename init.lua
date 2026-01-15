@@ -884,19 +884,16 @@ require('lazy').setup({
 
   --  Colorschemes
   {
-    'rebelot/kanagawa.nvim',
+    'loctvl842/monokai-pro.nvim',
     priority = 1000,
     config = function()
-      require('kanagawa').setup {
-        commentStyle = { italic = false },
+      require('monokai-pro').setup {
+        styles = {
+          comment = { italic = false },
+        },
       }
-
-      vim.cmd.colorscheme 'kanagawa-wave'
+      vim.cmd.colorscheme 'monokai-pro'
     end,
-  },
-  {
-    'sainnhe/everforest',
-    priority = 1000,
   },
 
   -- Highlight todo, notes, etc in comments
@@ -1010,18 +1007,6 @@ require('lazy').setup({
       lazy = '💤 ',
     },
   },
-})
-vim.api.nvim_create_autocmd('OptionSet', {
-  pattern = 'background',
-  callback = function()
-    if vim.o.background == 'dark' then
-      vim.cmd.colorscheme 'kanagawa-wave'
-    else
-      vim.g.everforest_background = 'hard'
-      vim.g.everforest_better_performance = 1
-      vim.cmd.colorscheme 'everforest'
-    end
-  end,
 })
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
