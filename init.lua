@@ -5,6 +5,7 @@
 
 -- Set <space> as the leader key
 -- See `:help mapleader`
+-- TODO: Learn all leader key stuff
 --  NOTE: Must happen before plugins are loaded (otherwise wrong leader will be used)
 vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
@@ -977,7 +978,7 @@ require('lazy').setup({
   -- require 'kickstart.plugins.indent_line',
   require 'kickstart.plugins.lint',
   -- require 'kickstart.plugins.autopairs',
-  -- require 'kickstart.plugins.neo-tree',
+  require 'kickstart.plugins.neo-tree',
   -- require 'kickstart.plugins.gitsigns', -- adds gitsigns recommend keymaps
 
   --  Uncomment the following line and add your plugins to `lua/custom/plugins/*.lua` to get going.
