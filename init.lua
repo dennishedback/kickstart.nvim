@@ -386,9 +386,11 @@ require('lazy').setup({
         defaults = {
           mappings = {
             i = {
+              ['<C-CR>'] = require('telescope.actions').select_default,
               ['<CR>'] = require('telescope.actions').select_tab,
             },
             n = {
+              ['<C-CR>'] = require('telescope.actions').select_default,
               ['<CR>'] = require('telescope.actions').select_tab,
             },
           },
