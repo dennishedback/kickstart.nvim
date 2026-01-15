@@ -746,8 +746,31 @@ require('lazy').setup({
       formatters_by_ft = {
         lua = { 'stylua' },
         python = { 'ruff_organize_imports', 'ruff_format' },
+        ruby = { 'rufo' },
+        eruby = { 'erb_format' },
+        -- eruby = { 'erb_lint' },
         -- You can use 'stop_after_first' to run the first available formatter from the list
         -- javascript = { "prettierd", "prettier", stop_after_first = true },
+      },
+      formatters = {
+        -- Run rufo via `bundle exec rufo`
+        rufo = {
+          command = 'bundle',
+          args = { 'exec', 'rufo', '$FILENAME' },
+          stdin = false,
+        },
+        -- Run erb-format via `bundle exec erb-format`
+        erb_format = {
+          command = 'bundle',
+          args = {
+            'exec',
+            'erb-format',
+            '--stdin',
+            '--stdin-filename',
+            '$FILENAME',
+          },
+          stdin = true,
+        },
       },
     },
   },
