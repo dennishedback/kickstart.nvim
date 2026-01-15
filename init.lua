@@ -138,6 +138,62 @@ vim.api.nvim_create_autocmd('TextYankPost', {
   end,
 })
 
+-- Make project-local Python toolchains (uv .venv or pixi) available to Neovim
+vim.api.nvim_create_autocmd({ 'BufEnter', 'BufWinEnter' }, {
+  pattern = { '*.py' },
+  callback = function()
+    local buf = vim.api.nvim_get_current_buf()
+    local start = vim.fs.dirname(vim.api.nvim_buf_get_name(buf))
+    if not start or start == '' then
+      return
+    end
+
+    local function prepend_to_path(bin_dir)
+      local path = vim.env.PATH or ''
+      if not path:match(vim.pesc(bin_dir)) then
+        vim.env.PATH = bin_dir .. ':' .. path
+      end
+    end
+
+    -- TODO: Refactor this mess
+
+    -- 1) uv-style .venv
+    local venv = vim.fs.find('.venv', { path = start, upward = true, type = 'directory' })[1]
+    if venv then
+      local bin = vim.fs.joinpath(venv, 'bin')
+      if vim.fn.isdirectory(bin) == 1 then
+        prepend_to_path(bin)
+        return
+      end
+    end
+
+    -- 2) pixi-style .pixi/envs/*
+    local pixi = vim.fs.find('.pixi', { path = start, upward = true, type = 'directory' })[1]
+
+    if pixi then
+      local envs = vim.fs.joinpath(pixi, 'envs')
+      if vim.fn.isdirectory(envs) == 1 then
+        local handle = vim.loop.fs_scandir(envs)
+        if handle then
+          while true do
+            local name, t = vim.loop.fs_scandir_next(handle)
+            if not name then
+              break
+            end
+            if t == 'directory' then
+              local bin = vim.fs.joinpath(envs, name, 'bin')
+              if vim.fn.isdirectory(bin) == 1 then
+                prepend_to_path(bin)
+                return
+              end
+            end
+          end
+        end
+      end
+    end
+  end,
+})
+
 -- [[ Install `lazy.nvim` plugin manager ]]
 --    See `:help lazy.nvim.txt` or https://github.com/folke/lazy.nvim for more info
 local lazypath = vim.fn.stdpath 'data' .. '/lazy/lazy.nvim'
@@ -686,12 +742,10 @@ require('lazy').setup({
           }
         end
       end,
-      -- TODO: Install python and ruby formatters
+      -- TODO: Install ruby formatters
       formatters_by_ft = {
         lua = { 'stylua' },
-        -- Conform can also run multiple formatters sequentially
-        -- python = { "isort", "black" },
-        --
+        python = { 'ruff_organize_imports', 'ruff_format' },
         -- You can use 'stop_after_first' to run the first available formatter from the list
         -- javascript = { "prettierd", "prettier", stop_after_first = true },
       },
@@ -898,7 +952,7 @@ require('lazy').setup({
   --
   -- require 'kickstart.plugins.debug',
   -- require 'kickstart.plugins.indent_line',
-  -- require 'kickstart.plugins.lint',
+  require 'kickstart.plugins.lint',
   -- require 'kickstart.plugins.autopairs',
   -- require 'kickstart.plugins.neo-tree',
   -- require 'kickstart.plugins.gitsigns', -- adds gitsigns recommend keymaps
