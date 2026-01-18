@@ -127,8 +127,8 @@ vim.keymap.set('n', '<C-k>', '<cmd> TmuxNavigateUp<CR>', { desc = 'Move focus to
 
 -- Create splits
 --  Use <leader> + s + <direction> to create splits
-vim.keymap.set('n', '<leader>sh', '<cmd>split<CR>', { desc = 'Create horizontal split' })
-vim.keymap.set('n', '<leader>sv', '<cmd>vsplit<CR>', { desc = 'Create vertical split' })
+vim.keymap.set('n', '<leader>"', '<cmd>split<CR>', { desc = 'Create horizontal split' })
+vim.keymap.set('n', '<leader>%', '<cmd>vsplit<CR>', { desc = 'Create vertical split' })
 
 -- NOTE: Some terminals have colliding keymaps or are not able to send distinct keycodes
 -- vim.keymap.set("n", "<C-S-h>", "<C-w>H", { desc = "Move window to the left" })
