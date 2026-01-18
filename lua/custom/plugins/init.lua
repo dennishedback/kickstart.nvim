@@ -3,6 +3,7 @@
 --
 -- See the kickstart.nvim README for more information
 return {
+  { 'christoomey/vim-tmux-navigator', lazy = false },
   {
     'zbirenbaum/copilot.lua',
     cmd = 'Copilot',
