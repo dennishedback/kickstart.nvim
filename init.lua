@@ -550,6 +550,44 @@ require('lazy').setup({
           --  This is where a variable was first declared, or where a function is defined, etc.
           --  To jump back, press <C-t>.
           map('grd', require('telescope.builtin').lsp_definitions, '[G]oto [D]efinition')
+          map('gtd', function()
+            local request_client = vim.lsp.get_client_by_id(event.data.client_id)
+            local encoding = request_client and request_client.offset_encoding or 'utf-16'
+            local params = vim.lsp.util.make_position_params(0, encoding)
+            vim.lsp.buf_request(0, 'textDocument/definition', params, function(err, result, ctx)
+              if err or not result or vim.tbl_isempty(result) then
+                return
+              end
+
+              local locations = vim.islist(result) and result or { result }
+              if #locations > 1 then
+                require('telescope.builtin').lsp_definitions { jump_type = 'tab' }
+                return
+              end
+
+              local location = locations[1]
+              local uri = location.uri or location.targetUri
+              local range = location.range or location.targetSelectionRange
+              if not uri or not range then
+                return
+              end
+
+              local path = vim.uri_to_fname(uri)
+              local relpath = vim.fn.fnamemodify(path, ':.')
+              vim.cmd('tabedit ' .. vim.fn.fnameescape(relpath))
+              vim.api.nvim_win_set_cursor(0, { range.start.line + 1, range.start.character })
+
+              local response_client = vim.lsp.get_client_by_id(ctx.client_id)
+              local response_encoding = response_client and response_client.offset_encoding or 'utf-16'
+              vim.lsp.util.show_document(location, response_encoding, { focus = true, reuse_win = true })
+            end)
+          end, '[G]oto [T]ab [D]efinition')
+          if vim.bo[event.buf].filetype == 'markdown' then
+            local attached_client = vim.lsp.get_client_by_id(event.data.client_id)
+            if attached_client and attached_client.name == 'marksman' then
+              map('gd', vim.lsp.buf.definition, '[G]oto [D]efinition')
+            end
+          end
 
           -- WARN: This is not Goto Definition, this is Goto Declaration.
           --  For example, in C this would take you to the header.
@@ -679,6 +717,7 @@ require('lazy').setup({
         -- But for many setups, the LSP (`ts_ls`) will work just fine
         -- ts_ls = {},
         --
+        marksman = {},
 
         lua_ls = {
           -- cmd = { ... },
