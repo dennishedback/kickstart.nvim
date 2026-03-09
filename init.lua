@@ -151,6 +151,17 @@ vim.api.nvim_create_autocmd('TextYankPost', {
   end,
 })
 
+-- Use 2-space indentation for HTML and CSS files.
+vim.api.nvim_create_autocmd('FileType', {
+  pattern = { 'html', 'css' },
+  callback = function()
+    vim.opt_local.shiftwidth = 2
+    vim.opt_local.tabstop = 2
+    vim.opt_local.softtabstop = 2
+    vim.opt_local.expandtab = true
+  end,
+})
+
 -- Make project-local Python toolchains (uv .venv or pixi) available to Neovim
 vim.api.nvim_create_autocmd({ 'BufEnter', 'BufWinEnter' }, {
   pattern = { '*.py' },
@@ -549,8 +560,8 @@ require('lazy').setup({
           -- Jump to the definition of the word under your cursor.
           --  This is where a variable was first declared, or where a function is defined, etc.
           --  To jump back, press <C-t>.
-          map('grd', require('telescope.builtin').lsp_definitions, '[G]oto [D]efinition')
-          map('gtd', function()
+          map('gd', vim.lsp.buf.definition, '[G]oto [D]efinition')
+          map('gD', function()
             local request_client = vim.lsp.get_client_by_id(event.data.client_id)
             local encoding = request_client and request_client.offset_encoding or 'utf-16'
             local params = vim.lsp.util.make_position_params(0, encoding)
@@ -581,13 +592,7 @@ require('lazy').setup({
               local response_encoding = response_client and response_client.offset_encoding or 'utf-16'
               vim.lsp.util.show_document(location, response_encoding, { focus = true, reuse_win = true })
             end)
-          end, '[G]oto [T]ab [D]efinition')
-          if vim.bo[event.buf].filetype == 'markdown' then
-            local attached_client = vim.lsp.get_client_by_id(event.data.client_id)
-            if attached_client and attached_client.name == 'marksman' then
-              map('gd', vim.lsp.buf.definition, '[G]oto [D]efinition')
-            end
-          end
+          end, '[G]oto [D]efinition in New Tab')
 
           -- WARN: This is not Goto Definition, this is Goto Declaration.
           --  For example, in C this would take you to the header.
