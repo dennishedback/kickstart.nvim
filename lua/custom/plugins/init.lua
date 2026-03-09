@@ -4,26 +4,26 @@
 -- See the kickstart.nvim README for more information
 return {
   { 'christoomey/vim-tmux-navigator', lazy = false },
-  {
-    'zbirenbaum/copilot.lua',
-    cmd = 'Copilot',
-    event = 'InsertEnter',
-    opts = {
-      suggestion = {
-        enabled = true,
-        auto_trigger = true,
-        keymap = {
-          accept = '<C-l>',
-          dismiss = '<C-k>',
-          next = '<C-j>',
-          prev = '<C-h>',
-        },
-      },
-      panel = {
-        enabled = false,
-      },
-    },
-  },
+  -- {
+  --   'zbirenbaum/copilot.lua',
+  --   cmd = 'Copilot',
+  --   event = 'InsertEnter',
+  --   opts = {
+  --     suggestion = {
+  --       enabled = true,
+  --       auto_trigger = true,
+  --       keymap = {
+  --         accept = '<C-l>',
+  --         dismiss = '<C-k>',
+  --         next = '<C-j>',
+  --         prev = '<C-h>',
+  --       },
+  --     },
+  --     panel = {
+  --       enabled = false,
+  --     },
+  --   },
+  -- },
   {
     'MeanderingProgrammer/render-markdown.nvim',
     dependencies = { 'nvim-treesitter/nvim-treesitter', 'nvim-mini/mini.nvim' }, -- if you use the mini.nvim suite
